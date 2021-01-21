@@ -3,7 +3,12 @@
     <el-button @click="openEditor('add')">新增</el-button>
     <el-button @click="openEditor('edit')">修改</el-button>
     <el-button @click="openEditor('view')">查看</el-button>
-    <Editor :type="editorType" :visible.sync="editorVisible" :fields="fields" />
+    <Editor
+      :type="editorType"
+      :visible.sync="editorVisible"
+      :fields="fields"
+      @confirm="confirm"
+    />
   </div>
 </template>
 
@@ -22,12 +27,19 @@ export default {
           label: '姓名',
           field: 'username',
           type: 'input',
-          hidden: ['add', 'edit']
+          dataType: 'string',
+          required: true,
+          validateTrigger: 'blur',
+          // rules: [
+          //   {required: true, message: '请输入姓名', trigger: 'blur'}
+          // ],
+          hidden: ['view']
         },
         {
           label: '性别',
           field: 'sex',
           type: 'select',
+          required: true,
           options: [
             {
               label: '男',
@@ -38,6 +50,12 @@ export default {
               value: 1
             }
           ]
+        },
+        {
+          label: '年龄',
+          field: 'age',
+          type: 'input',
+          dataType: 'number'
         }
       ]
     }
@@ -56,6 +74,11 @@ export default {
           break
       }
       this.editorVisible = true
+    },
+    confirm (formData) {
+      console.log(formData)
+      // 请求接口提交数据 等等
+      this.editorVisible = false
     }
   }
 }

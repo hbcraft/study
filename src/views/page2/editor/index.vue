@@ -1,6 +1,21 @@
 <template>
-  <el-dialog :title="title" :visible="visible" @close="closeEditor">
-    <my-form :disabled="disabled" :type="type" :fields="fields" />
+  <el-dialog
+    :title="title"
+    :visible="visible"
+    @close="closeEditor"
+    destroy-on-close
+  >
+    <my-form
+      ref="form"
+      :disabled="disabled"
+      :type="type"
+      :fields="fields"
+      @change="handlerChange"
+    />
+    <template slot="footer">
+      <el-button @click="closeEditor">取 消</el-button>
+      <el-button type="primary" @click="confirm">确 定</el-button>
+    </template>
   </el-dialog>
 </template>
 
@@ -43,9 +58,22 @@ export default {
       return this.type === 'view'
     }
   },
+  data () {
+    return {
+      formData: {}
+    }
+  },
   methods: {
     closeEditor () {
       this.$emit('update:visible', false)
+    },
+    handlerChange (formData) {
+      this.formData = { ...formData }
+    },
+    confirm () {
+      this.$refs.form.validateForm().then(() => {
+        this.$emit('confirm', { ...this.formData })
+      })
     }
   }
 }
